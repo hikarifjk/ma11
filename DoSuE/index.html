@@ -14,13 +14,15 @@
     <div id="map">
 
     </div>
-    <!--
     <button id="button">押してどすえ！</button>
     <p id="result">
     </p>
+    <!--
 -->
     <script src="http://maps.googleapis.com/maps/api/js?sensor=true&language=ja"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="jquery.xdomainajax.js"></script>
+
     <script>
         $(function(){
             // まず、ここで、地図を表示させよう
@@ -40,9 +42,44 @@
 
                     // その地点をクリックされたら、情報領域にメッセージを表示する
                     google.maps.event.addListener(map, 'click', function(event){
+                        console.log(event);
                         geocoder.geocode({
                             'latLng': event.latLng
                         }, function(result, status){
+                            console.log(result[0].formatted_address);
+
+                            $.ajax({
+                                url: 'https://api.voicetext.jp/v1/tts',
+                                beforeSend: function(xhr) {
+                                    xhr.setRequestHeader('Authorization', 'Basic ' + btoa('xedqrs2uxppxvefp:'));
+                                },
+                                type: 'GET',
+                                timeout: 10000,
+                                data: {
+                                  "text": "おはようございます",
+                                  "speaker": "hikari",
+                                  "emotion": "happiness",
+                                  "emotion_level": "2",
+                                  "pitch": "105",
+                                  "speedz": "105"
+                                }
+
+
+                            }).success(function(data, status, xhr) {
+                                console.log('voice success');
+                                console.log(data);
+                                console.log(status);
+                                console.log(xhr);
+                            }).fail(function(data, status, xhr){
+                                console.log('voice fail');
+                                console.log(data);
+                                console.log(status);
+                                console.log(xhr);
+                            });
+
+
+
+
                             if (status == google.maps.GeocoderStatus.OK) {
                                 var infoWindow = new google.maps.InfoWindow({
                                     content: result[0].formatted_address,
@@ -69,16 +106,22 @@
                 $('#button').click(function() {
 
                     // 緯度経度から「麩屋町 押小路 の交差点と麩屋町 御池 の交差点の間です。」など、場所を説明する文言を返します。
+                    // 「ジオどす 京都通り名住所検索システム」の利用
                     $.ajax({
-                        url: "http://api.geodosu.com/v2/tellwhere?apikey='aaa'&lat=123.3&lon=223.3",
-                        type: 'POST',
-                        timeout: 3000
-                    }).done(function(data, status, xhr){
+                        // うまくとれない。
+//                        url: "http://api.geodosu.com/v2/tellwhere?apikey='hikarifjk'&lat=35.011053013712235&lon=135.7517910003662",
+                        url: "http://api.geodosu.com/v2/tellwhere?apikey='hikarifjk'&lat='35.011053013712235'&lon='135.7517910003662'",
+//                        url: "http://api.geodosu.com/v2/geodosu2?apikey=hikarifjk&address=京都市寺町御池上ル上本能寺前町488番地",
+                        type: 'GET',
+                        timeout: 10000,
+                        //datatype: 'json'
+                    }).success(function(data, status, xhr){
                         $('#result').text(data);
+                        console.log(data);
                     }).fail(function(data, status, xhr){
                         $('#result').text(data.statusText);
                     });
-                    // console.log('aaaa');
+
                 });
         });
 
