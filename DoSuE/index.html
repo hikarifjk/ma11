@@ -117,23 +117,25 @@
                         //datatype: 'json'
                     }).success(function(data, status, xhr){
                         $('#result').text(data);
-                        console.log(data);
+                        // console.log(data);
                     }).fail(function(data, status, xhr){
                         $('#result').text(data.statusText);
                     });
 
                     $.ajax({
-                        // うまくとれない。
-                        url: "https://api.apigw.smt.docomo.ne.jp/webCuration/v3/search?APIKEY=00000000000000000000000000326253&keyword=スギちゃん",
+                        // url: "https://api.apigw.smt.docomo.ne.jp/webCuration/v3/genre?APIKEY=753247384d71357675794e467a4e447877316639612f2e58667974423661746f5454397a4236767674392e",
+                        url: "https://api.apigw.smt.docomo.ne.jp/webCuration/v3/search?APIKEY=753247384d71357675794e467a4e447877316639612f2e58667974423661746f5454397a4236767674392e&keyword=内閣",
                         type: 'GET',
                         timeout: 10000,
                     }).success(function(data, status, xhr){
-                        $('#result').text(data);
                         console.log(data);
+                        if (data.results[0]) {
+                            $('#result').text(data);
+                            console.log(data.results[0]);
+                        }
                     }).fail(function(data, status, xhr){
                         $('#result').text(data.statusText);
                     });
-
 
 
                 });
