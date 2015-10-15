@@ -123,15 +123,23 @@
                     });
 
                     $.ajax({
+                        // url: "https://api.apigw.smt.docomo.ne.jp/webCuration/v3/search?APIKEY=753247384d71357675794e467a4e447877316639612f2e58667974423661746f5454397a4236767674392e&keyword=数",
+                        url: "https://api.apigw.smt.docomo.ne.jp/webCuration/v3/contents?APIKEY=753247384d71357675794e467a4e447877316639612f2e58667974423661746f5454397a4236767674392e&genreid=13&s=1&n=10",
                         // url: "https://api.apigw.smt.docomo.ne.jp/webCuration/v3/genre?APIKEY=753247384d71357675794e467a4e447877316639612f2e58667974423661746f5454397a4236767674392e",
-                        url: "https://api.apigw.smt.docomo.ne.jp/webCuration/v3/search?APIKEY=753247384d71357675794e467a4e447877316639612f2e58667974423661746f5454397a4236767674392e&keyword=内閣",
                         type: 'GET',
+                        CcontentType: 'application/JSON',
+                        datatype: 'JSON',
                         timeout: 10000,
                     }).success(function(data, status, xhr){
                         console.log(data);
                         if (data.results[0]) {
-                            $('#result').text(data);
-                            console.log(data.results[0]);
+                            var result = JSON.parse(data.results[0].slice(data.results[0].indexOf('{'), data.results[0].indexOf('</body>')));
+                            console.log(result);
+                            result.articleContents.forEach(function(value, index, ar) {
+                                console.log(value.contentData.title);
+                            });
+
+                            //debugger
                         }
                     }).fail(function(data, status, xhr){
                         $('#result').text(data.statusText);
